@@ -41,7 +41,7 @@
 
 
 <!-- TABLE OF CONTENTS -->
-## Table of Contents
+## Agenda
 
 * [About the Project](#about-the-project)
   * [Built With](#built-with)
