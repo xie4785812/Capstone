@@ -22,7 +22,7 @@
 <!-- PROJECT LOGO -->
 <br />
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">Explore Data Analysis and Stock Forecasting Methods</h3>
 
   <p align="center">
     An awesome README template to jumpstart your projects!
