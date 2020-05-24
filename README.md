@@ -25,7 +25,7 @@
   <h3 align="center">Explore Data Analysis and Stock Forecasting Methods</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    2020 Summer Capstone Project work by Zongge Xie.
     <br />
     <a href="https://github.com/xie4785812/Capstone"><strong>Explore the docs »</strong></a>
     <br />
