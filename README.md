@@ -45,8 +45,8 @@
 
 * [About the Project](#about-the-project)
   * [Built With](#built-with)
-* [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
+* [Related Work](#related-work)
+  * [Literature](#literature)
   * [Installation](#installation)
 * [Usage](#usage)
 * [Roadmap](#roadmap)
