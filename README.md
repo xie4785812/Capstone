@@ -47,7 +47,7 @@
   * [Built With](#built-with)
 * [Related Work](#related-work)
   * [Literature](#literature)
-  * [Advisor Recommendation](#advisor-recom)
+  * [Advisor Recommendation](#advisor-recommendation)
 * [Data](#data)
 * [Method](#method)
 * [Discussion](#discussion)
