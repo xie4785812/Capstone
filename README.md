@@ -48,12 +48,12 @@
 * [Related Work](#related-work)
   * [Literature](#literature)
   * [Installation](#installation)
-* [Usage](#usage)
-* [Roadmap](#roadmap)
-* [Contributing](#contributing)
-* [License](#license)
+* [Data](#data)
+* [Method](#method)
+* [Discussion](#discussion)
+* [Conclusion](#conclusion)
 * [Contact](#contact)
-* [Acknowledgements](#acknowledgements)
+
 
 
 
