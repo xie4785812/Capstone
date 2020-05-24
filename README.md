@@ -47,7 +47,7 @@
   * [Built With](#built-with)
 * [Related Work](#related-work)
   * [Literature](#literature)
-  * [Installation](#installation)
+  * [Advisor's recommendation](#advisor-recom)
 * [Data](#data)
 * [Method](#method)
 * [Discussion](#discussion)
@@ -82,12 +82,12 @@ This section should list any major frameworks that you built your project using.
 
 
 <!-- GETTING STARTED -->
-## Getting Started
+## Related Work
 
 This is an example of how you may give instructions on setting up your project locally.
 To get a local copy up and running follow these simple example steps.
 
-### Prerequisites
+### Literature
 
 This is an example of how to list things you need to use the software and how to install them.
 * npm
@@ -95,7 +95,7 @@ This is an example of how to list things you need to use the software and how to
 npm install npm@latest -g
 ```
 
-### Installation
+### Advisor's recommendation
 
 1. Get a free API Key at [https://example.com](https://example.com)
 2. Clone the repo
@@ -114,7 +114,7 @@ const API_KEY = 'ENTER YOUR API';
 
 
 <!-- USAGE EXAMPLES -->
-## Usage
+## Data
 
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
@@ -123,14 +123,14 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 
 <!-- ROADMAP -->
-## Roadmap
+## Method
 
 See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a list of proposed features (and known issues).
 
 
 
 <!-- CONTRIBUTING -->
-## Contributing
+## Discussion
 
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
@@ -143,7 +143,7 @@ Contributions are what make the open source community such an amazing place to b
 
 
 <!-- LICENSE -->
-## License
+## Conclusion
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
