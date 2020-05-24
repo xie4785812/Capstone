@@ -89,11 +89,9 @@ To get a local copy up and running follow these simple example steps.
 
 ### Literature
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-```sh
-npm install npm@latest -g
-```
+* [A data analytic approach to forecasting daily stock returns in an emerging market](https://www-sciencedirect-com.ezproxy.rit.edu/science/article/pii/S0377221716301096)
+* [Large data sets and machine learning: Applications to statistical arbitrage](https://www-sciencedirect-com.ezproxy.rit.edu/science/article/pii/S0377221719303339)
+* [Deep neural networks, gradient-boosted trees, random forests: Statistical arbitrage on the S&P 500](https://www-sciencedirect-com.ezproxy.rit.edu/science/article/pii/S0377221716308657)
 
 ### Advisor Recommendation
 
