@@ -118,7 +118,9 @@ Use this space to show useful examples of how a project can be used. Additional 
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
-
+* [NVIDIA Corporation (NVDA)](https://finance.yahoo.com/quote/NVDA/history?p=NVDA)
+* [Barrick Gold Corporation (GOLD)](https://finance.yahoo.com/quote/GOLD/history?p=GOLD)
+* [USD/CNY (CNY=X)](https://finance.yahoo.com/quote/CNY=X?p=CNY=X&.tsrc=fin-srch)
 
 <!-- ROADMAP -->
 ## Method
