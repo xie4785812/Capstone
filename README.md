@@ -47,7 +47,7 @@
   * [Built With](#built-with)
 * [Related Work](#related-work)
   * [Literature](#literature)
-  * [Advisor's recommendation](#advisor-recom)
+  * [Advisor Recommendation](#advisor-recom)
 * [Data](#data)
 * [Method](#method)
 * [Discussion](#discussion)
@@ -95,7 +95,7 @@ This is an example of how to list things you need to use the software and how to
 npm install npm@latest -g
 ```
 
-### Advisor's recommendation
+### Advisor Recommendation
 
 1. Get a free API Key at [https://example.com](https://example.com)
 2. Clone the repo
