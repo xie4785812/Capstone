@@ -121,7 +121,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 Your Name - [@Ted Xie]( tx5326@g.rit.edu)
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: [https://github.com/xie4785812/Capstone](https://github.com/xie4785812/Capstone)
 
 
 
