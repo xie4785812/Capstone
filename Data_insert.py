@@ -3,9 +3,7 @@ from pymongo import UpdateOne
 from dateutil import parser
 import csv
 
-client = MongoClient(port=27017)
-print('Connect MongoDB Successful')
-db = client.StockAnalyze
+
 
 def add_stock_data(filename):
     name = filename[0:-4]
@@ -26,7 +24,6 @@ def add_stock_data(filename):
                    "adjacent close price": adj_close, "volume": volume}
             col_stock.insert_one(ins)
 
-# add_stock_data('NVDA.csv')
 
 
 def add_gold_data(filename):
@@ -46,7 +43,6 @@ def add_gold_data(filename):
                    "adjacent close price": adj_close, "volume": volume}
             col_stock.insert_one(ins)
 
-add_gold_data('GOLD.csv')
 
 def add_exchange_data(filename):
     name = filename[0:-4]
@@ -66,5 +62,13 @@ def add_exchange_data(filename):
                    "adjacent close price": adj_close, "volume": volume}
             col_stock.insert_one(ins)
 
-add_exchange_data('CNY=X.csv')
+
+if __name__ == '__main__':
+    client = MongoClient(port=27017)
+    print('Connect MongoDB Successful')
+    db = client.StockAnalyze
+
+    # add_stock_data('NVDA.csv')
+    add_gold_data('GOLD.csv')
+    # add_exchange_data()
 

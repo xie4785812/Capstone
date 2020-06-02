@@ -36,24 +36,27 @@ Y = np.array(Y)
 
 print(X.shape)
 
-# train_x, test_x, train_y, test_y = train_test_split(X, Y, test_size=0.3, random_state=0, shuffle=False)
-# train_x = train_x.reshape(-1,1)
-# train_y = train_y.reshape(-1,1)
-# test_x = test_x.reshape(-1,1)
-# test_y = test_y.reshape(-1,1)
+train_x, test_x, train_y, test_y = train_test_split(X, Y, test_size=0.05, random_state=0, shuffle=False)
+# train_x = train_x
+# train_y = train_y
+# test_x = test_x
+# test_y = test_y
 
 
 etn = ElasticNet()
 
-etn.fit(X,Y)
+etn.fit(train_x,train_y)
 
 today_open = np.array([353.33, 24.65]).reshape(-1,2)
 print(today_open.shape)
-predict_test_elastic = etn.predict(today_open)
+predict_test_elastic = etn.predict(test_x)
 print(predict_test_elastic)
 
-print(mean_squared_error([352.25], predict_test_elastic))
+print(mean_squared_error(test_y, predict_test_elastic))
 
+plt.plot(test_y,'b')
+plt.plot(predict_test_elastic,'r')
+plt.show()
 # lr = LinearRegression()
 # lr.fit(X,Y)
 # today_open = np.array([353.33, 24.65]).reshape(-1,2)
