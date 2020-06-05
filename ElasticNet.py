@@ -27,38 +27,37 @@ for i in output:
     X.append(tmp)
     Y.append(i['close price'])
 
-
-
-
 X = np.array(X)
 
 Y = np.array(Y)
 
-print(X.shape)
-
-train_x, test_x, train_y, test_y = train_test_split(X, Y, test_size=0.05, random_state=0, shuffle=False)
-# train_x = train_x
-# train_y = train_y
-# test_x = test_x
-# test_y = test_y
 
 
-etn = ElasticNet()
+train_x, test_x, train_y, test_y = train_test_split(X, Y, test_size=0.01, random_state=0, shuffle=False)
+def predict_in_days(train_x, train_y, test_x, test_y):
+    etn = ElasticNet()
+    etn.fit(train_x, train_y)
+    result = []
+    begin_test = test_x[0]
+    print(begin_test)
+    for i in range(len(test_x)-1):
+        tmp_closing = etn.predict(begin_test.reshape(-1,2))
+        print(tmp_closing)
+        result.append(tmp_closing)
+        print(result)
+        begin_test[0] = tmp_closing
+        begin_test[1] = test_x[i+1,1]
+        print(begin_test)
+    return np.array(result)
 
-etn.fit(train_x,train_y)
+predice_test_elastic = predict_in_days(train_x,train_y,test_x,test_y)
+#
+# print(mean_squared_error(test_y, predice_test_elastic))
 
-today_open = np.array([353.33, 24.65]).reshape(-1,2)
-print(today_open.shape)
-predict_test_elastic = etn.predict(test_x)
-print(predict_test_elastic)
-
-print(mean_squared_error(test_y, predict_test_elastic))
-
+plt.title('Elastic Net Prediction Curve')
 plt.plot(test_y,'b')
-plt.plot(predict_test_elastic,'r')
+plt.plot(predice_test_elastic,'r')
 plt.show()
-# lr = LinearRegression()
-# lr.fit(X,Y)
-# today_open = np.array([353.33, 24.65]).reshape(-1,2)
-# pre = lr.predict(today_open)
-# print(pre)
+
+
+
