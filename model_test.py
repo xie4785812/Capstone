@@ -21,7 +21,7 @@ def collect_data(name):
 
     msft_data = []
     for i in msft_cursor:
-        msft_data.append(float(i['price']))
+        msft_data.append(float(i['price'].replace(',','')))
 
     msft_data = np.array(msft_data).reshape(-1, 1)
     train_x = msft_data[:-13]
@@ -45,7 +45,7 @@ def svm_model_test(train_x,train_y,test_x,test_y):
         tmp = price
 
     print(mean_squared_error(result, test_y))
-    plt.title('SVM (06/09/2020)')
+    plt.title('SVM (06/11/2020)')
     plt.xlabel('last minute before closing ')
     plt.ylabel('price')
     plt.ticklabel_format(useOffset=False)
@@ -55,6 +55,7 @@ def svm_model_test(train_x,train_y,test_x,test_y):
     plt.plot(time,result, 'r', label = 'prediction')
     plt.legend()
     plt.show()
+    plt.savefig('SVM.png')
 
 def etn_reg(train_x,train_y,test_x,test_y):
     etn = ElasticNet()
@@ -67,13 +68,14 @@ def etn_reg(train_x,train_y,test_x,test_y):
         result.append(price)
         tmp = price
     print(mean_squared_error(result, test_y))
-    plt.title('elastic net regression (06/09/2020)')
+    plt.title('elastic net regression (06/11/2020)')
     plt.xlabel('last minute before closing ')
     plt.ylabel('price')
     time = [i for i in range(0, 60, 5)]
     plt.plot(time, test_y, 'b')
     plt.plot(time, result, 'r')
     plt.show()
+    plt.savefig('ETN.png')
 
 def lasso_reg(train_x,train_y,test_x,test_y):
     lasso = linear_model.Lasso(alpha=0.1)
@@ -86,7 +88,7 @@ def lasso_reg(train_x,train_y,test_x,test_y):
         result.append(price)
         tmp = price
     print(mean_squared_error(result, test_y))
-    plt.title('lasso regression (06/09/2020)')
+    plt.title('lasso regression (06/11/2020)')
     plt.xlabel('last minute before closing ')
     plt.ylabel('price')
     plt.xticks(np.arange(0,60,5))
@@ -95,12 +97,13 @@ def lasso_reg(train_x,train_y,test_x,test_y):
     plt.plot(time, result, 'r', label = 'prediction')
     plt.legend()
     plt.show()
+    plt.savefig('lasso')
 
-def LSTM(tarin_x, train__y, test_x, test_y):
-    
+
+
 
 if __name__ == '__main__':
-    train_x, train_y, test_x, test_y = collect_data('MSFT')
-    # etn_reg(train_x,train_y,test_x,test_y)
+    train_x, train_y, test_x, test_y = collect_data('NVDA')
+    etn_reg(train_x,train_y,test_x,test_y)
     svm_model_test(train_x,train_y,test_x,test_y)
     lasso_reg(train_x, train_y, test_x, test_y)
