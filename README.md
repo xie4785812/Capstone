@@ -76,6 +76,7 @@ For the relevant work of this project, some references will be used, and the opi
 * [A data analytic approach to forecasting daily stock returns in an emerging market](https://www-sciencedirect-com.ezproxy.rit.edu/science/article/pii/S0377221716301096)
 * [Large data sets and machine learning: Applications to statistical arbitrage](https://www-sciencedirect-com.ezproxy.rit.edu/science/article/pii/S0377221719303339)
 * [Deep neural networks, gradient-boosted trees, random forests: Statistical arbitrage on the S&P 500](https://www-sciencedirect-com.ezproxy.rit.edu/science/article/pii/S0377221716308657)
+* .[Stock Market Predictions with LSTM in Python](https://www.datacamp.com/community/tutorials/lstm-python-stock-market)
 
 ### Advisor Recommendation
 
