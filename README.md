@@ -91,16 +91,25 @@ For the relevant work of this project, some references will be used, and the opi
 <!-- USAGE EXAMPLES -->
 ## Data
 
-The real-time stock data we used are all captured from Yahoo Fiance, which includes data of five stocks, including the time interval for Apple, Tesla, NVIDA, FaceBook, and Microsoft to start crawling on June 9, 2020. Real-time stock data for 5 seconds. The data file provided is Json, under the data file.
+The real-time stock data we used are all captured from Yahoo Finance, which includes data of five stocks, including the time interval for Apple, Tesla, NVIDA, FaceBook, and Microsoft to start crawling on June 9, 2020. Real-time stock data for 5 seconds. The data file provided is Json, under the file of data.
 
 
 
 * [NVIDIA Corporation (NVDA)](https://finance.yahoo.com/quote/NVDA/history?p=NVDA)
-* [Barrick Gold Corporation (GOLD)](https://finance.yahoo.com/quote/GOLD/history?p=GOLD)
-* [USD/CNY (CNY=X)](https://finance.yahoo.com/quote/CNY=X?p=CNY=X&.tsrc=fin-srch)
+* [Apple Inc.](https://finance.yahoo.com/quote/AAPL?p=AAPL&.tsrc=fin-srch)
+* [Microsoft Corporation (MSFT)](https://finance.yahoo.com/quote/MSFT?p=MSFT&.tsrc=fin-srch)
+* [Facebook, Inc. (FB)](https://finance.yahoo.com/quote/FB?p=FB&.tsrc=fin-srch)
+* [Tesla, Inc. (TSLA)](https://finance.yahoo.com/quote/TSLA?p=TSLA&.tsrc=fin-srch)
 
 <!-- ROADMAP -->
 ## Method
+
+
+First download all the data files from data, which contains the five kinds of stock data required by our model, import them into the mongodb database.
+
+Then open the location of the file through the terminal and enter python model_run.py run, you can test all models of each stock data.
+
+We also support the testing of a single model of a single data, enter python model_run.py data_select feature_select model_select, where data_select includes NVDA, AAPL, MSFT, FB, MSFT, feature_select includes simple and fix, and model_select under simple includes svm, lasso, The model_select under elastic and fix includes svm and bpn.
 
 
 
