@@ -63,6 +63,9 @@ For the data / analysis library used in this project, you can refer to the follo
 * [MongoDB](https://www.mongodb.com/)
 * [PyMongo](https://pymongo.readthedocs.io/en/stable/)
 * [Numpy](https://numpy.org/)
+* [sklearn](https://scikit-learn.org/stable/)
+* [tensorflow](https://www.tensorflow.org/)
+* [matplotlib](https://matplotlib.org/)
 
 
 
