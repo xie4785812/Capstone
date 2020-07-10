@@ -108,7 +108,9 @@ The real-time stock data we used are all captured from Yahoo Finance, which incl
 First download all the data files from data, which contains the five kinds of stock data required by our model, import them into the mongodb database.
 
 Then open the location of the file through the terminal and enter python model_run.py run, you can test all models of each stock data.
-
+<p align="center">
+<a href="https://github.com/othneildrew/Best-README-Template">
+</p>
 We also support the testing of a single model of a single data, enter python model_run.py data_select feature_select model_select, where data_select includes NVDA, AAPL, MSFT, FB, MSFT, feature_select includes simple and fix, and model_select under simple includes svm, lasso, The model_select under elastic and fix includes svm and bpn.
 
 
