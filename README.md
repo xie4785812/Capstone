@@ -96,7 +96,7 @@ The real-time stock data we used are all captured from Yahoo Finance, which incl
 
 
 * [NVIDIA Corporation (NVDA)](https://finance.yahoo.com/quote/NVDA/history?p=NVDA)
-* [Apple Inc.](https://finance.yahoo.com/quote/AAPL?p=AAPL&.tsrc=fin-srch)
+* [Apple Inc.(AAPL)](https://finance.yahoo.com/quote/AAPL?p=AAPL&.tsrc=fin-srch)
 * [Microsoft Corporation (MSFT)](https://finance.yahoo.com/quote/MSFT?p=MSFT&.tsrc=fin-srch)
 * [Facebook, Inc. (FB)](https://finance.yahoo.com/quote/FB?p=FB&.tsrc=fin-srch)
 * [Tesla, Inc. (TSLA)](https://finance.yahoo.com/quote/TSLA?p=TSLA&.tsrc=fin-srch)
