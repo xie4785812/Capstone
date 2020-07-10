@@ -112,6 +112,9 @@ Then open the location of the file through the terminal and enter python model_r
 <img src="work/op1.png" alt="Logo">
 </p>
 We also support the testing of a single model of a single data, enter python model_run.py data_select feature_select model_select, where data_select includes NVDA, AAPL, MSFT, FB, MSFT, feature_select includes simple and fix, and model_select under simple includes svm, lasso, The model_select under elastic and fix includes svm and bpn.
+<p align="center">
+<img src="work/op2.png" alt="Logo">
+</p>
 
 
 
