@@ -106,7 +106,9 @@ The real-time stock data we used are all captured from Yahoo Finance, which incl
 
 
 First download all the data files from data, which contains the five kinds of stock data required by our model, import them into the mongodb database.
-
+<p align="center">
+<img src="work/op3.png" alt="Logo">
+</p>
 Then open the location of the file through the terminal and enter python model_run.py run, you can test all models of each stock data.
 <p align="center">
 <img src="work/op1.png" alt="Logo">
