@@ -21,7 +21,7 @@ for i in cursor:
     data.append(float(i['price'].replace(',','')))
 
 data = np.array(data)
-data = data[0:200]
+data = data[1:51]
 time = np.array([i for i in range(len(data))])
 
 max_error = 0.5
@@ -56,6 +56,26 @@ def draw_segments(segments,data):
             patch = patches.PathPatch(path, facecolor='black', lw=0.5)
             ax.add_patch(patch)
 
+def add_label(segments):
+    label = []
+    tmp = 0
+    for seg in segments:
+        print(seg)
+        start = int(seg[0])
+        end = int(seg[2])
+        start_price = float(seg[1])
+        end_price = float(seg[3])
+        if start_price < end_price:
+            tmp = 0
+        elif start_price == end_price:
+            tmp = 1
+        else:
+            tmp = 2
+        for i in range(start, end):
+            label.append(tmp)
+    label.append(tmp)
+    return label
+
 def draw_plot(data,plot_title):
     plot(range(len(data)),data,alpha=0.8,color='red')
     title(plot_title)
@@ -66,6 +86,8 @@ def draw_plot(data,plot_title):
 
 figure()
 segments = segment.topdownsegment(data, fit.interpolate, fit.sumsquared_error, max_error)
+label = add_label(segments)
+print(label)
 draw_plot(data, 'top-down with simple interpolation')
 draw_segments(segments,data)
 savefig('status box.png')

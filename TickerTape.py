@@ -55,8 +55,8 @@ client = MongoClient(port=27017)
 print('Connect MongoDB Successful')
 db = client.StockAnalyze
 nvda = db['nvda_daily']
-start_time = datetime.datetime(2020,6,11,9,30,00)
-end_time = datetime.datetime(2020,6,11,16,0,0)
+start_time = datetime.datetime(2020,7,9,9,30,00)
+end_time = datetime.datetime(2020,7,9,16,0,0)
 
 def begin_crawl(url, name):
     collection = db[name]
