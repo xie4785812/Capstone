@@ -91,9 +91,9 @@ For the relevant work of this project, some references will be used, and the opi
 <!-- USAGE EXAMPLES -->
 ## Data
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+The real-time stock data we used are all captured from Yahoo Fiance, which includes data of five stocks, including the time interval for Apple, Tesla, NVIDA, FaceBook, and Microsoft to start crawling on June 9, 2020. Real-time stock data for 5 seconds. The data file provided is Json, under the data file.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+
 
 * [NVIDIA Corporation (NVDA)](https://finance.yahoo.com/quote/NVDA/history?p=NVDA)
 * [Barrick Gold Corporation (GOLD)](https://finance.yahoo.com/quote/GOLD/history?p=GOLD)
