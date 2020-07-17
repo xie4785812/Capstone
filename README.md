@@ -110,13 +110,13 @@ First download all the data files from data, which contains the five kinds of st
 <img src="work/op3.png" alt="Logo">
 </p>
 Then open the location of the file through the terminal and enter python model_run.py run, you can test all models of each stock data.
-```
-(base) ..\PycharmProject\capstone\python model_run.py run
-```
+
+    (base) ..\PycharmProject\capstone\python model_run.py run
+
 We also support the testing of a single model of a single data, enter python model_run.py data_select feature_select model_select, where data_select includes NVDA, AAPL, MSFT, FB, MSFT, feature_select includes simple and fix, and model_select under simple includes svm, lasso, The model_select under elastic and fix includes svm and bpn.
-```
-(base) ..\PycharmProject\capstone\python model_run.py AAPL simple svm
-```
+
+    (base) ..\PycharmProject\capstone\python model_run.py AAPL simple svm
+
 
 
 
