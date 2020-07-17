@@ -43,7 +43,7 @@ def lasso_reg(train_x,train_y,test_x,test_y):
         price = lasso.predict(tmp.reshape(-1, 1))
         result.append(price)
         tmp = price
-    print(mean_squared_error(result, test_y))
+    print('Mean Squared Error of Lasso Regression',mean_squared_error(result, test_y))
     plt.title('lasso regression (06/11/2020)')
     plt.xlabel('last minute before closing ')
     plt.ylabel('price')
@@ -68,7 +68,7 @@ def svm_model_test(train_x,train_y,test_x,test_y):
         result.append(price)
         tmp = price
 
-    print(mean_squared_error(result, test_y))
+    print('Mean Squared Error of SVM',mean_squared_error(result, test_y))
     plt.title('SVM (06/11/2020)')
     plt.xlabel('last minute before closing ')
     plt.ylabel('price')
@@ -94,7 +94,7 @@ def etn_reg(train_x,train_y,test_x,test_y):
         price = etn.predict(tmp)
         result.append(price)
         tmp = price.reshape(-1,1)
-    print(mean_squared_error(result, test_y))
+    print('Mean Squared Error of Elastic Net Regression',mean_squared_error(result, test_y))
     plt.title('elastic net regression (06/11/2020)')
     plt.xlabel('last minute before closing ')
     plt.ylabel('price')
@@ -164,7 +164,65 @@ def model_defination():
                   metrics=['accuracy'])
     return model
 
+def seg_extract(data_name):
+    client = MongoClient(port=27017)
+    print('Connect MongoDB Successful')
+    db = client.StockAnalyze
+    msft = db[data_name]
+    cursor = msft.find({})
+    data = []
+    for i in cursor:
+        data.append(float(i['price'].replace(',', '')))
+    data = np.array(data)
+    segments = segment.topdownsegment(data, fit.interpolate, fit.sumsquared_error, max_error)
 
+    input = feature_extract(segments)
+    output = extract_new_y_feature(segments)
+
+    size = int(input.shape[0] * 0.95)
+
+    train_x = input[:size]
+    train_y = output[1:size + 1]
+    test_x = input[size:-1]
+    test_y = output[size + 1:]
+
+    return train_x,train_y,test_x,test_y
+
+def svm_box(train_x,train_y,test_x,test_y):
+    tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1, 1e-1, 1e-2, 1e-3, 1e-4],
+                         'C': [0.01, 0.1, 1, 10, 100, 1000], 'max_iter': [100]},
+                        {'kernel': ['linear'], 'C': [0.01, 0.1, 1, 10, 100, 1000], 'max_iter': [100]}]
+
+    clf = GridSearchCV(SVC(), tuned_parameters)
+    clf.fit(train_x, train_y)
+    print('----------' + data_select + '----------')
+    print('fit finished')
+    print(clf.best_params_)
+    result = clf.predict(test_x)
+    plt.title(data_select)
+    plt.plot(result, 'r', label='predict')
+    plt.plot(test_y, 'b', label='real')
+    plt.xlabel('time')
+    plt.ylabel('price')
+    plt.legend()
+    fig_name = data_select + '.pdf'
+    plt.savefig(fig_name)
+    plt.show()
+
+    print(classification_report(test_y, result))
+    print('Accuracy Score: ', accuracy_score(test_y, result))
+    print('F1 Score:', f1_score(test_y, result))
+    print('Recall Score:', recall_score(test_y, result))
+    print('Precision Score:', precision_score(test_y, result))
+
+def bpn_box(train_x, train_y, test_x, test_y):
+    train_size = train_x.shape[0]
+    test_size = test_y.shape[0]
+    model = model_defination()
+    train_x = train_x.reshape((train_size, 5, 1, 1))
+    history = model.fit(train_x, train_y, epochs=30, validation_data=(train_x, train_y))
+    test_x = test_x.reshape((test_size, 5, 1, 1))
+    model.evaluate(test_x, test_y, verbose=1)
 if __name__ == '__main__':
 
     names = ['NVDA','AAPL', 'FB','MSFT','TSLA']
@@ -173,9 +231,7 @@ if __name__ == '__main__':
         client = MongoClient(port=27017)
         print('Connect MongoDB Successful')
         db = client.StockAnalyze
-
         feature_select = sys.argv[2]
-
         if feature_select == 'simple':
             train_x, train_y, test_x, test_y = collect_data(data_select)
             model_select = sys.argv[3]
@@ -193,61 +249,14 @@ if __name__ == '__main__':
                 sys.exit()
         elif feature_select == 'fix':
             print('Feature Extraction')
-            msft = db[data_select]
-            cursor = msft.find({})
-            data = []
-            for i in cursor:
-                data.append(float(i['price'].replace(',', '')))
-            data = np.array(data)
-            segments = segment.topdownsegment(data, fit.interpolate, fit.sumsquared_error, max_error)
-
-            input = feature_extract(segments)
-            output = extract_new_y_feature(segments)
-
-            size = int(input.shape[0] * 0.95)
-
-            train_x = input[:size]
-            train_y = output[1:size + 1]
-            test_x = input[size:-1]
-            test_y = output[size + 1:]
-
+            train_x, train_y, test_x, test_y = seg_extract(data_select)
             model_select = sys.argv[3]
             if model_select == 'svm':
                 print('start SVM')
-                tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1, 1e-1, 1e-2, 1e-3, 1e-4],
-                                     'C': [0.01, 0.1, 1, 10, 100, 1000], 'max_iter': [100]},
-                                    {'kernel': ['linear'], 'C': [0.01, 0.1, 1, 10, 100, 1000], 'max_iter': [100]}]
-
-                clf = GridSearchCV(SVC(), tuned_parameters)
-                clf.fit(train_x, train_y)
-                print('----------' + data_select + '----------')
-                print('fit finished')
-                print(clf.best_params_)
-                result = clf.predict(test_x)
-                plt.title(data_select)
-                plt.plot(result, 'r', label='predict')
-                plt.plot(test_y, 'b', label='real')
-                plt.xlabel('time')
-                plt.ylabel('price')
-                plt.legend()
-                fig_name = data_select + '.pdf'
-                plt.savefig(fig_name)
-                plt.show()
-
-                print(classification_report(test_y, result))
-                print('Accuracy Score: ', accuracy_score(test_y, result))
-                print('F1 Score:', f1_score(test_y, result))
-                print('Recall Score:', recall_score(test_y, result))
-                print('Precision Score:', precision_score(test_y, result))
+                svm_box(train_x, train_y, test_x, test_y)
             elif model_select == 'bpn':
                 print('start BPN')
-                train_size = train_x.shape[0]
-                test_size = test_y.shape[0]
-                model = model_defination()
-                train_x = train_x.reshape((train_size, 5, 1, 1))
-                history = model.fit(train_x, train_y, epochs=30, validation_data=(train_x, train_y))
-                test_x = test_x.reshape((test_size, 5, 1, 1))
-                model.evaluate(test_x, test_y, verbose=1)
+                bpn_box(train_x, train_y, test_x, test_y)
             elif model_select == 'adaboostSVM':
                 print(8)
             else:
@@ -276,62 +285,15 @@ if __name__ == '__main__':
             print('Simple Elastic Net Regression Done with', name)
             print('----------------------------------')
             print('Status Box Feature Extraction with', name)
-            msft = db[name]
-            cursor = msft.find({})
-            data = []
-            for i in cursor:
-                data.append(float(i['price'].replace(',', '')))
-            data = np.array(data)
-            segments = segment.topdownsegment(data, fit.interpolate, fit.sumsquared_error, max_error)
-
-            input = feature_extract(segments)
-            output = extract_new_y_feature(segments)
-
-            size = int(input.shape[0] * 0.95)
-
-            train_x = input[:size]
-            train_y = output[1:size + 1]
-            test_x = input[size:-1]
-            test_y = output[size + 1:]
+            train_x, train_y, test_x, test_y = seg_extract(name)
             print('Status Box Feature Extraction Done with', name)
             print('----------------------------------')
             print('Status Box SVM with', name)
-            tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1, 1e-1, 1e-2, 1e-3, 1e-4],
-                                 'C': [0.01, 0.1, 1, 10, 100, 1000], 'max_iter': [100]},
-                                {'kernel': ['linear'], 'C': [0.01, 0.1, 1, 10, 100, 1000], 'max_iter': [100]}]
-
-            clf = GridSearchCV(SVC(), tuned_parameters)
-            clf.fit(train_x, train_y)
-            print('----------' + name + '----------')
-            print('fit finished')
-            print('Best paramester', clf.best_params_)
-            result = clf.predict(test_x)
-            plt.title(name)
-            plt.plot(result, 'r', label='predict')
-            plt.plot(test_y, 'b', label='real')
-            plt.xlabel('time')
-            plt.ylabel('price')
-            plt.legend()
-            fig_name = name + '.pdf'
-            plt.savefig(fig_name)
-            plt.show()
-
-            print(classification_report(test_y, result))
-            print('Accuracy Score: ', accuracy_score(test_y, result))
-            print('F1 Score:', f1_score(test_y, result))
-            print('Recall Score:', recall_score(test_y, result))
-            print('Precision Score:', precision_score(test_y, result))
-
+            svm_box(train_x, train_y, test_x, test_y)
             print('Status Box SVM Done with', name)
             print('-------------------')
             print('Status Box BPN', name)
-            train_size = train_x.shape[0]
-            test_size = test_y.shape[0]
-            model = model_defination()
-            train_x = train_x.reshape((train_size, 5, 1, 1))
-            history = model.fit(train_x, train_y, epochs=30, validation_data=(train_x, train_y))
-            test_x = test_x.reshape((test_size, 5, 1, 1))
-            model.evaluate(test_x, test_y, verbose=1)
+            bpn_box(train_x, train_y, test_x, test_y)
             print('Status BPN Done with', name)
             print('---------------')
 
