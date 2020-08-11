@@ -109,11 +109,21 @@ First download all the data files from data, which contains the five kinds of st
 
 Open the MongoDB, click on create database, the database name must be: StockAnalyze, the collection name can input anything but not empty:
 
+<p align="center">
+<img src="work/create_database.png" alt="Logo">
+</p>
 
 After Successfully create the database, next to create collection, there are five collections you need to create: AAPL, MSFT, NVDA, FB, TSLA:
 
+<p align="center">
+<img src="work/create_collection.png" alt="Logo">
+</p>
+
 Then to import the data, click on collection on the top of the interface, choose Import Data, then browse the data file that same as the stock data you want to import, click on IMPORT.
 
+<p align="center">
+<img src="work/import_data.png" alt="Logo">
+</p>
 
 Then you can use this database.
 
