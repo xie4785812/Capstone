@@ -1,9 +1,9 @@
 import numpy as np
-from sklearn.linear_model import ElasticNet
+from sklearn.linear_model import ElasticNet,Lasso
 from sklearn import linear_model
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import *
-from sklearn.svm import SVC
+from sklearn.svm import SVC,SVR
 from sklearn import svm
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -11,99 +11,116 @@ from pymongo import MongoClient
 import segment
 import fit
 import sys
+import model_test
+import datetime
+from sklearn.model_selection import train_test_split
+import itertools
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from hmmlearn.hmm import GaussianHMM
+from sklearn.model_selection import train_test_split
+from tqdm import tqdm
+import hmm
+import hmm_status_box
 
-def collect_data(name):
+n_steps_frac_change=50
+n_steps_frac_high=10
+n_steps_frac_low=10
+n_latency_days=10
+
+def svm_model_test(train_x,train_y,test_x,test_y):
+    test_size = len(test_y)
+    tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1, 1e-1, 1e-2, 1e-3, 1e-4],
+                         'C': [0.01, 0.1, 1, 10, 100, 1000], 'max_iter': [100]},
+                        {'kernel': ['linear'], 'C': [0.01, 0.1, 1, 10, 100, 1000], 'max_iter': [100]}]
+
+    clf = GridSearchCV(SVR(), tuned_parameters)
+
+    clf.fit(train_x, train_y)
+    result = clf.predict(test_x)
+    print(clf.best_params_)
+    score = accuracy_cal(test_x,test_y,result)
+    print(score)
+    print('svm done')
+    return result
+
+
+
+def etn_reg(train_x,train_y,test_x,test_y):
+    alpha = [0.001,0.01,0.1,1,10,100,1000]
+    l1_ratio = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]
+    param_grid = dict(alpha = alpha, l1_ratio = l1_ratio)
+    etn = GridSearchCV(ElasticNet(), param_grid)
+    etn.fit(train_x, train_y)
+    print(etn.best_params_)
+    result = etn.predict(test_x)
+    score = accuracy_cal(test_x, test_y, result)
+    print(score)
+    print('etn done')
+    return result
+
+
+
+def lasso_reg(train_x,train_y,test_x,test_y):
+    test_size = len(test_y)
+    tuned_parameters = {'alpha':[5,10,20]}
+    lasso = GridSearchCV(Lasso(), tuned_parameters)
+    lasso.fit(train_x,train_y)
+    print(lasso.best_params_)
+    result = lasso.predict(test_x)
+    score = accuracy_cal(test_x,test_y,result)
+    print(score)
+    print('lasso done')
+    return result
+
+
+
+def model_run(name):
+    train_x, train_y, test_x, test_y = feature_extraction(name)
+    lasso_result = lasso_reg(train_x,train_y,test_x,test_y)
+    svm_result = svm_model_test(train_x,train_y,test_x,test_y)
+    etn_result = etn_reg(train_x,train_y,test_x,test_y)
+    # plt.figure(figsize=(20,10),dpi=150)
+    plt.title('Lasso vs ETN vs SVM of '+ name)
+    plt.xlabel('last minute before closing')
+    plt.ylabel('price')
+    plt.plot(lasso_result[0:100], 'orange' ,label = 'LASSO Result')
+    plt.plot(svm_result[0:100], 'red', label = 'SVM Result')
+    plt.plot(etn_result[0:100], 'green', alpha=0.5, label = 'ETN Result')
+    plt.plot(test_y[0:100], 'black', label = 'Actual Price')
+    plt.legend()
+    plt.savefig('svm_etn_lasso_'+ name + '.png')
+    plt.show()
+
+
+def feature_extraction(name):
     msft = db[name]
     msft_cursor = msft.find({})
 
     msft_data = []
+    time = datetime.datetime(2020, 6, 15, 9, 30, 00)
     for i in msft_cursor:
-        msft_data.append(float(i['price'].replace(',','')))
-
+        if i['time'] >= time:
+            msft_data.append(float(i['price'].replace(',', '')))
     msft_data = np.array(msft_data).reshape(-1, 1)
-
-    training_size = round(msft_data.shape[0] * 0.95)
-    print(training_size)
-    train_x = msft_data[:training_size]
-    train_y = msft_data[1:training_size + 1]
-    test_x = msft_data[training_size:]
-    test_y = msft_data[training_size + 1:]
-
-    test_x = test_x[0].reshape(-1,1)
+    train_data, test_data = train_test_split(msft_data, test_size=0.2, shuffle=False)
+    train_x = train_data[:-12]
+    train_y = train_data[12:]
+    test_x = test_data[:-12]
+    test_y = test_data[12:]
     return train_x,train_y,test_x,test_y
 
-def lasso_reg(train_x,train_y,test_x,test_y):
-    test_size = len(test_y)
-    lasso = linear_model.Lasso(alpha=0.1)
-    lasso.fit(train_x,train_y)
-
-    result = []
-    tmp = test_x
-    for i in range(test_size):
-        price = lasso.predict(tmp.reshape(-1, 1))
-        result.append(price)
-        tmp = price
-    print('Mean Squared Error of Lasso Regression',mean_squared_error(result, test_y))
-    plt.title('lasso regression (06/11/2020)')
-    plt.xlabel('last minute before closing ')
-    plt.ylabel('price')
-    plt.xticks(np.arange(0,test_size * 5,5))
-    time = [i for i in range(0, test_size * 5, 5)]
-    plt.plot(time, test_y, 'b', label = 'test')
-    plt.plot(time, result, 'r', label = 'prediction')
-    plt.legend()
-    plt.savefig('lasso.png')
-
-    plt.show()
-
-def svm_model_test(train_x,train_y,test_x,test_y):
-    test_size = len(test_y)
-    clf = svm.SVR()
-    clf.fit(train_x, train_y)
-
-    result = []
-    tmp = test_x
-    for i in range(test_size):
-        price = clf.predict(tmp.reshape(-1, 1))
-        result.append(price)
-        tmp = price
-
-    print('Mean Squared Error of SVM',mean_squared_error(result, test_y))
-    plt.title('SVM (06/11/2020)')
-    plt.xlabel('last minute before closing ')
-    plt.ylabel('price')
-    plt.ticklabel_format(useOffset=False)
-    plt.xticks(np.arange(0,test_size * 5,5))
-    time = [i for i in range(0,test_size * 5,5)]
-    plt.plot(time, test_y, 'b', label = 'test')
-    plt.plot(time,result, 'r', label = 'prediction')
-    plt.legend()
-    plt.savefig('SVM.png')
-
-    plt.show()
-
-
-def etn_reg(train_x,train_y,test_x,test_y):
-    test_size = len(test_y)
-    etn = ElasticNet()
-    etn.fit(train_x, train_y)
-
-    result = []
-    tmp = test_x
-    for i in range(test_size):
-        price = etn.predict(tmp)
-        result.append(price)
-        tmp = price.reshape(-1,1)
-    print('Mean Squared Error of Elastic Net Regression',mean_squared_error(result, test_y))
-    plt.title('elastic net regression (06/11/2020)')
-    plt.xlabel('last minute before closing ')
-    plt.ylabel('price')
-    time = [i for i in range(0, test_size * 5, 5)]
-    plt.plot(time, test_y, 'b')
-    plt.plot(time, result, 'r')
-    plt.savefig('ETN.png')
-
-    plt.show()
+def accuracy_cal(test_x, test_y, pred_y):
+    total = 0
+    right = 0
+    for i in range(len(test_x)):
+        total += 1
+        if test_y[i] - test_x[i] > 0 and pred_y[i] - test_x[i] > 0:
+            right+=1
+        elif test_y[i] - test_x[i] < 0 and pred_y[i] - test_x[i] < 0:
+            right+=1
+    return right/total
 
 def feature_extract(segments):
     result = []
@@ -233,20 +250,8 @@ if __name__ == '__main__':
         db = client.StockAnalyze
         feature_select = sys.argv[2]
         if feature_select == 'simple':
-            train_x, train_y, test_x, test_y = collect_data(data_select)
-            model_select = sys.argv[3]
-            if model_select == 'svm':
-                print('Start SVM model')
-                svm_model_test(train_x, train_y, test_x, test_y)
-            elif model_select == 'lasso':
-                print('Start Lasso Regression')
-                lasso_reg(train_x, train_y, test_x, test_y)
-            elif model_select == 'elastic':
-                print('Start Elastic Net Model')
-                etn_reg(train_x, train_y, test_x, test_y)
-            else:
-                print('wrong model')
-                sys.exit()
+            print('simple extraction regression with ' + data_select)
+            model_run(data_select)
         elif feature_select == 'fix':
             print('Feature Extraction')
             train_x, train_y, test_x, test_y = seg_extract(data_select)
@@ -257,8 +262,12 @@ if __name__ == '__main__':
             elif model_select == 'bpn':
                 print('start BPN')
                 bpn_box(train_x, train_y, test_x, test_y)
-            elif model_select == 'adaboostSVM':
-                print(8)
+            elif model_select == 'hmm':
+                print('start HMM on historical data')
+                hmm.model_run(data_select)
+            elif model_select == 'hmm_box':
+                print('start HMM on status box data')
+                hmm_status_box.model_run(data_select)
             else:
                 print('wrong model')
                 sys.exit()
@@ -271,18 +280,9 @@ if __name__ == '__main__':
         db = client.StockAnalyze
 
         for name in names:
-            train_x, train_y, test_x, test_y = collect_data(name)
-            print('Simple SVM Model with', name)
-            svm_model_test(train_x, train_y, test_x, test_y)
-            print('Simple SVM Model Done with', name)
-            print('---------------------')
-            print('Simple Lasso Regression with', name)
-            lasso_reg(train_x, train_y, test_x, test_y)
-            print('Simple Lasso Regression Done with', name)
-            print('----------------------------')
-            print('Simple Elastic Net Regression with', name)
-            etn_reg(train_x, train_y, test_x, test_y)
-            print('Simple Elastic Net Regression Done with', name)
+            print('----------------------------------')
+            print('simple extraction regression with' + name)
+            model_run(name)
             print('----------------------------------')
             print('Status Box Feature Extraction with', name)
             train_x, train_y, test_x, test_y = seg_extract(name)
@@ -291,11 +291,19 @@ if __name__ == '__main__':
             print('Status Box SVM with', name)
             svm_box(train_x, train_y, test_x, test_y)
             print('Status Box SVM Done with', name)
-            print('-------------------')
+            print('----------------------------------')
             print('Status Box BPN', name)
             bpn_box(train_x, train_y, test_x, test_y)
-            print('Status BPN Done with', name)
-            print('---------------')
+            print('Status Box BPN Done with', name)
+            print('----------------------------------')
+            print('Historical data HMM ', name)
+            hmm.model_run(name)
+            print('Historical data HMM done ', name)
+            print('----------------------------------')
+            print('Status box data HMM ', name)
+            hmm_status_box.model_run(name)
+            print('Status box data HMM done ', name)
+            print('----------------------------------')
 
 
 

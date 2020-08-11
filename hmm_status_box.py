@@ -20,17 +20,8 @@ client = MongoClient(port=27017)
 print('Connect MongoDB Successful')
 db = client.StockAnalyze
 max_error = 0.1
-msft = db['NVDA']
-msft_cursor = msft.find({})
+stocks = ['NVDA', 'MSFT','AAPL', 'FB', 'TSLA']
 
-data = []
-time = datetime.datetime(2020, 6, 15, 9, 30, 00)
-for i in msft_cursor:
-    if i['time'] >= time:
-        data.append(float(i['price'].replace(',', '')))
-
-data = np.array(data)
-segments = segment.topdownsegment(data, fit.interpolate, fit.sumsquared_error, max_error)
 
 def build_box_feature(segments, data):
     result = []
@@ -48,9 +39,7 @@ def build_box_feature(segments, data):
         result.append(box_feature)
     return np.array(result)
 
-box_feature = build_box_feature(segments, data)
-print(box_feature)
-train_data, test_data = train_test_split(box_feature, test_size=0.33, shuffle=False)
+
 
 
 def feature_extract(data):
@@ -64,11 +53,7 @@ def feature_extract(data):
     frac_low = (open_price - low_price) / open_price
     return np.column_stack((frac_change, frac_high, frac_low))
 
-feature_vector = feature_extract(train_data)
-print(feature_vector)
 
-hmm = GaussianHMM(n_components=4)
-hmm.fit(feature_vector)
 
 def compute_all_possible_outcomes(n_steps_frac_change, n_steps_frac_high,n_steps_frac_low):
     frac_change_range = np.linspace(-0.1, 0.1, n_steps_frac_change)
@@ -77,7 +62,7 @@ def compute_all_possible_outcomes(n_steps_frac_change, n_steps_frac_high,n_steps
 
     return np.array(list(itertools.product(frac_change_range,frac_high_range,frac_low_range)))
 
-possibile_outcomes = compute_all_possible_outcomes(n_steps_frac_low,n_steps_frac_high,n_steps_frac_change)
+
 
 def get_most_probable_outcome(day_index):
     previous_data_start_index = max(0, day_index - n_latency_days)
@@ -99,7 +84,7 @@ def predict_close_price(day_index):
 
     return open_price * (1 + predicted_frac_change)
 
-def predict_close_price_for_days(days):
+def predict_close_price_for_days(days, stock_name):
     predicted_close_prices = []
     for day_index in tqdm(range(days)):
         predicted_close_prices.append(predict_close_price(day_index))
@@ -110,13 +95,57 @@ def predict_close_price_for_days(days):
 
     plt.plot(actual_close_prices, 'b', label = 'actual')
     plt.plot(predicted_close_prices, 'r', label = 'predicted')
-    plt.title('NVDA')
+    plt.title(stock_name)
 
 
     plt.legend()
-    plt.savefig('hmm_box.png')
+    name = stock_name + '_box.png'
+    plt.savefig(name)
     plt.show()
 
     return predicted_close_prices
 
-predict = predict_close_price_for_days(500)
+def model_run(name):
+    msft = db[name]
+    msft_cursor = msft.find({})
+
+    data = []
+    time = datetime.datetime(2020, 6, 15, 9, 30, 00)
+    for i in msft_cursor:
+        if i['time'] >= time:
+            data.append(float(i['price'].replace(',', '')))
+
+    data = np.array(data)
+    segments = segment.topdownsegment(data, fit.interpolate, fit.sumsquared_error, max_error)
+    box_feature = build_box_feature(segments, data)
+    print(box_feature)
+    train_data, test_data = train_test_split(box_feature, test_size=0.33, shuffle=False)
+    feature_vector = feature_extract(train_data)
+    print(feature_vector)
+
+    hmm = GaussianHMM(n_components=4)
+    hmm.fit(feature_vector)
+    possibile_outcomes = compute_all_possible_outcomes(n_steps_frac_low, n_steps_frac_high, n_steps_frac_change)
+    predict = predict_close_price_for_days(500, name)
+# for stock in stocks:
+#     msft = db[stock]
+#     msft_cursor = msft.find({})
+#
+#     data = []
+#     time = datetime.datetime(2020, 6, 15, 9, 30, 00)
+#     for i in msft_cursor:
+#         if i['time'] >= time:
+#             data.append(float(i['price'].replace(',', '')))
+#
+#     data = np.array(data)
+#     segments = segment.topdownsegment(data, fit.interpolate, fit.sumsquared_error, max_error)
+#     box_feature = build_box_feature(segments, data)
+#     print(box_feature)
+#     train_data, test_data = train_test_split(box_feature, test_size=0.33, shuffle=False)
+#     feature_vector = feature_extract(train_data)
+#     print(feature_vector)
+#
+#     hmm = GaussianHMM(n_components=4)
+#     hmm.fit(feature_vector)
+#     possibile_outcomes = compute_all_possible_outcomes(n_steps_frac_low, n_steps_frac_high, n_steps_frac_change)
+#     predict = predict_close_price_for_days(500,stock)

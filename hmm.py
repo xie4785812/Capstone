@@ -12,8 +12,7 @@ n_steps_frac_change=50
 n_steps_frac_high=10
 n_steps_frac_low=10
 n_latency_days=10
-data = pd.read_csv('data/NVDA.csv')
-train_data, test_data = train_test_split(data, test_size=0.33, shuffle=False)
+
 def feature_extract(data):
     open_price = np.array(data['Open'])
     close_price = np.array(data['Close'])
@@ -26,11 +25,7 @@ def feature_extract(data):
 
     return np.column_stack((frac_change, frac_high, frac_low))
 
-feature_vector = feature_extract(train_data)
-print(feature_vector)
 
-hmm = GaussianHMM(n_components=4)
-hmm.fit(feature_vector)
 
 def compute_all_possible_outcomes(n_steps_frac_change, n_steps_frac_high,n_steps_frac_low):
     frac_change_range = np.linspace(-0.1, 0.1, n_steps_frac_change)
@@ -39,7 +34,7 @@ def compute_all_possible_outcomes(n_steps_frac_change, n_steps_frac_high,n_steps
 
     return np.array(list(itertools.product(frac_change_range,frac_high_range,frac_low_range)))
 
-possibile_outcomes = compute_all_possible_outcomes(n_steps_frac_low,n_steps_frac_high,n_steps_frac_change)
+
 
 def get_most_probable_outcome(day_index):
     previous_data_start_index = max(0, day_index - n_latency_days)
@@ -61,7 +56,7 @@ def predict_close_price(day_index):
 
     return open_price * (1 + predicted_frac_change)
 
-def predict_close_price_for_days(days):
+def predict_close_price_for_days(days, name):
     predicted_close_prices = []
     for day_index in tqdm(range(days)):
         predicted_close_prices.append(predict_close_price(day_index))
@@ -69,16 +64,39 @@ def predict_close_price_for_days(days):
     test = test_data[0:days]
     days = np.array(test['Date'], dtype="datetime64[ms]")
     actual_close_prices = test['Close']
-
+    plt.xlabel('time series')
+    plt.ylabel('close price')
     plt.plot(days, actual_close_prices, 'b', label = 'actual')
     plt.plot(days, predicted_close_prices, 'r', label = 'predicted')
-    plt.title('NVDA')
+    plt.title(name)
 
 
     plt.legend()
-    plt.savefig('hmm.png')
+    plt.savefig('historical_'+ name +'.png')
     plt.show()
 
     return predicted_close_prices
 
-predict = predict_close_price_for_days(500)
+def model_run(name):
+    data = pd.read_csv('data/' + name + '.csv')
+    train_data, test_data = train_test_split(data, test_size=0.33, shuffle=False)
+    feature_vector = feature_extract(train_data)
+    print(feature_vector)
+
+    hmm = GaussianHMM(n_components=4)
+    hmm.fit(feature_vector)
+
+    possibile_outcomes = compute_all_possible_outcomes(n_steps_frac_low, n_steps_frac_high, n_steps_frac_change)
+    predict = predict_close_price_for_days(500, name)
+
+# for stock in stocks:
+#     data = pd.read_csv('data/'+ stock +'.csv')
+#     train_data, test_data = train_test_split(data, test_size=0.33, shuffle=False)
+#     feature_vector = feature_extract(train_data)
+#     print(feature_vector)
+#
+#     hmm = GaussianHMM(n_components=4)
+#     hmm.fit(feature_vector)
+#
+#     possibile_outcomes = compute_all_possible_outcomes(n_steps_frac_low,n_steps_frac_high,n_steps_frac_change)
+#     predict = predict_close_price_for_days(500, stock)
