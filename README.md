@@ -102,21 +102,53 @@ The real-time stock data we used are all captured from Yahoo Finance, which incl
 * [Tesla, Inc. (TSLA)](https://finance.yahoo.com/quote/TSLA?p=TSLA&.tsrc=fin-srch)
 
 <!-- ROADMAP -->
-## Method
+## How to use
 
 
-First download all the data files from data, which contains the five kinds of stock data required by our model, import them into the mongodb database.
+First download all the data files from data, which contains the five kinds of stock data required by our model.
+
+Open the MongoDB, click on create database, the database name must be: StockAnalyze, the collection name can input anything but not empty:
+
+
+After Successfully create the database, next to create collection, there are five collections you need to create: AAPL, MSFT, NVDA, FB, TSLA:
+
+Then to import the data, click on collection on the top of the interface, choose Import Data, then browse the data file that same as the stock data you want to import, click on IMPORT.
+
+
+Then you can use this database.
+
 <p align="center">
 <img src="work/op3.png" alt="Logo">
 </p>
+
+
 Then open the location of the file through the terminal and enter python model_run.py run, you can test all models of each stock data.
 
     (base) ..\PycharmProject\capstone\python model_run.py run
 
-We also support the testing of a single model of a single data, enter python model_run.py data_select feature_select model_select, where data_select includes NVDA, AAPL, MSFT, FB, MSFT, feature_select includes simple and fix, and model_select under simple includes svm, lasso, The model_select under elastic and fix includes svm and bpn.
+We also support the testing of a single model of a single data, enter python model_run.py data_select feature_select model_select, where data_select includes NVDA, AAPL, MSFT, FB, MSFT, feature_select includes simple and fix(regression and status box classfication), and if choose simple, it will automatically run the regression, if you choose the fix, u will next to choose one of them: svm, bpn, hmm, hmm_box to test the case you want to.
 
-    (base) ..\PycharmProject\capstone\python model_run.py AAPL simple svm
+    (base) ..\PycharmProject\capstone\python model_run.py AAPL simple
 
+This means to use the simple feature extraction and regression to run on the AAPL real-time data
+
+    (base) ..\PycharmProject\capstone\python model_run.py AAPL fix bpn
+
+This means to use the status box classfication and BPN to run on the AAPL real-time data
+
+    (base) ..\PycharmProject\capstone\python model_run.py AAPL fix svm
+    
+This means to use the status box classfication and SVM to run on the AAPL real-time data
+
+    (base) ..\PycharmProject\capstone\python model_run.py AAPL fix hmm_box
+
+This means to use the status box classfication and HMM to run on the AAPL real-time data
+
+    (base) ..\PycharmProject\capstone\python model_run.py AAPL fix hmm
+
+This means to use the status box classfication and HMM to run on the AAPL historical data
+
+If something you type in wrong, it will exit the system, you need to re-enter the sentence
 
 
 
